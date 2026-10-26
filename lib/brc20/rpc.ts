@@ -1,15 +1,16 @@
 // Inscription lookups served by brc20-prog's JSON-RPC on the network RPC URL.
 // cspell:ignore inscr
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
 
 import type { SearchResultItem } from 'types/api/search';
 
 import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
-import useFetch from 'lib/hooks/useFetch';
 
-const rpcUrl = config.chain.rpcUrls[0];
+// Read on use, so importing this module does not touch the app config.
+function getRpcUrl(): string | undefined {
+  return config.chain.rpcUrls[0];
+}
 
 interface RpcResponse<T> {
   result?: T | null;
@@ -26,20 +27,25 @@ interface Brc20Block {
   timestamp: string;
 }
 
-function useRpcCall() {
-  const fetch = useFetch();
+async function call<T>(method: string, params: Array<unknown>): Promise<T | null> {
+  const rpcUrl = getRpcUrl();
+  if (!rpcUrl) {
+    throw new Error(`${ method }: no network RPC URL configured`);
+  }
+  const response = await fetch(rpcUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+  });
+  if (!response.ok) {
+    throw new Error(`${ method }: HTTP ${ response.status }`);
+  }
 
-  return React.useCallback(async<T>(method: string, params: Array<unknown>): Promise<T | null> => {
-    const response = await fetch<RpcResponse<T>, unknown>(rpcUrl, {
-      method: 'POST',
-      body: { jsonrpc: '2.0', id: 1, method, params },
-    }) as RpcResponse<T>;
-
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-    return response.result ?? null;
-  }, [ fetch ]);
+  const payload = await response.json() as RpcResponse<T>;
+  if (payload.error) {
+    throw new Error(`${ method }: ${ payload.error.message }`);
+  }
+  return payload.result ?? null;
 }
 
 interface Params {
@@ -49,20 +55,16 @@ interface Params {
 
 // The inscription that triggered a BRC2.0 transaction.
 export function useBrc20TxInscriptionId({ hash, isEnabled = true }: Params) {
-  const call = useRpcCall();
-
   return useQuery({
     queryKey: [ 'brc20_rpc:tx_inscription_id', hash ],
     queryFn: () => call<string>('brc20_getInscriptionIdByTxHash', [ hash ]),
-    enabled: isEnabled && Boolean(rpcUrl) && Boolean(hash),
+    enabled: isEnabled && Boolean(getRpcUrl()) && Boolean(hash),
     refetchOnMount: false,
   });
 }
 
 // The deploy inscription of a contract, confirmed by its receipt having created this address.
 export function useBrc20ContractInscriptionId({ hash, isEnabled = true }: Params) {
-  const call = useRpcCall();
-
   return useQuery({
     queryKey: [ 'brc20_rpc:contract_inscription_id', hash ],
     queryFn: async() => {
@@ -73,7 +75,7 @@ export function useBrc20ContractInscriptionId({ hash, isEnabled = true }: Params
       const receipt = await call<Brc20TxReceipt>('brc20_getTxReceiptByInscriptionId', [ inscriptionId ]);
       return receipt?.contractAddress?.toLowerCase() === hash.toLowerCase() ? inscriptionId : null;
     },
-    enabled: isEnabled && Boolean(rpcUrl) && Boolean(hash),
+    enabled: isEnabled && Boolean(getRpcUrl()) && Boolean(hash),
     placeholderData: null,
     refetchOnMount: false,
   });
@@ -81,8 +83,6 @@ export function useBrc20ContractInscriptionId({ hash, isEnabled = true }: Params
 
 // Search results for an inscription id: the transaction it triggered and the contract it deployed.
 export function useBrc20InscriptionSearch({ inscriptionId, isEnabled = true }: { inscriptionId: string; isEnabled?: boolean }) {
-  const call = useRpcCall();
-
   return useQuery<Array<SearchResultItem>, ResourceError<unknown>>({
     queryKey: [ 'brc20_rpc:inscription_search', inscriptionId ],
     queryFn: async() => {
@@ -107,6 +107,6 @@ export function useBrc20InscriptionSearch({ inscriptionId, isEnabled = true }: {
       }
       return items;
     },
-    enabled: isEnabled && Boolean(rpcUrl) && Boolean(inscriptionId),
+    enabled: isEnabled && Boolean(getRpcUrl()) && Boolean(inscriptionId),
   });
 }
