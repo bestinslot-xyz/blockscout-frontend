@@ -57,7 +57,7 @@ const TxsStats = (props: Props) => {
 
   // in microservice data, fee values are already divided by 10^decimals
   const txFeeSum24h = isStatsFeatureEnabled ?
-    Number(txsStatsQuery.data?.transactions_fee_24h?.value) :
+    txsStatsQuery.data?.transactions_fee_24h && Number(txsStatsQuery.data.transactions_fee_24h.value) :
     Number(txsStatsApiQuery.data?.transaction_fees_sum_24h) / (10 ** chainConfig.chain.currency.decimals);
 
   const avgFee = isStatsFeatureEnabled ? txsStatsQuery.data?.average_transactions_fee_24h?.value : txsStatsApiQuery.data?.transaction_fees_avg_24h;

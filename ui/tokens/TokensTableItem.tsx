@@ -7,11 +7,12 @@ import type { AggregatedTokenInfo } from 'types/client/multichainAggregator';
 
 import config from 'configs/app';
 import multichainConfig from 'configs/multichain';
+import { isBrc20BaseToken } from 'lib/brc20/tokens';
 import getItemIndex from 'lib/getItemIndex';
-import { getTokenTypeName } from 'lib/token/tokenTypes';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { TableCell, TableRow } from 'toolkit/chakra/table';
 import { Tag } from 'toolkit/chakra/tag';
+import Brc20TokenTypeTag from 'ui/brc20/Brc20TokenTypeTag';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
 import type { EntityProps as AddressEntityProps } from 'ui/shared/entities/address/AddressEntity';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
@@ -97,7 +98,7 @@ const TokensTableItem = ({
               fontWeight="700"
               noLink={ type === 'NATIVE' }
             />
-            { type !== 'NATIVE' && (
+            { type !== 'NATIVE' && !isBrc20BaseToken(token) && (
               <Flex columnGap={ 2 } py="5px" alignItems="center">
                 <AddressEntity
                   address={ tokenAddress }
@@ -118,7 +119,7 @@ const TokensTableItem = ({
               </Flex>
             ) }
             <Flex columnGap={ 1 }>
-              <Tag loading={ isLoading }>{ getTokenTypeName(type, chainInfo?.app_config) }</Tag>
+              <Brc20TokenTypeTag token={ token } loading={ isLoading }/>
               { bridgedChainTag && <Tag loading={ isLoading }>{ bridgedChainTag }</Tag> }
             </Flex>
           </Flex>

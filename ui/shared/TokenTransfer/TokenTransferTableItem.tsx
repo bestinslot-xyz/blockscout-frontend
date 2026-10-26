@@ -4,7 +4,8 @@ import React from 'react';
 import type { TokenTransfer } from 'types/api/tokenTransfer';
 import type { ClusterChainConfig } from 'types/multichain';
 
-import { getTokenTypeName, isConfidentialTokenType } from 'lib/token/tokenTypes';
+import { getBrc20TokenTypeName, getBrc20TransferTypeText } from 'lib/brc20/tokens';
+import { isConfidentialTokenType } from 'lib/token/tokenTypes';
 import { Badge } from 'toolkit/chakra/badge';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { TableCell, TableRow } from 'toolkit/chakra/table';
@@ -73,8 +74,8 @@ const TokenTransferTableItem = ({
               mt={ 1 }
             />
             <Flex columnGap={ 2 } rowGap={ 2 } mt={ 2 } flexWrap="wrap">
-              <Badge loading={ isLoading }>{ getTokenTypeName(token.type, chainData?.app_config) }</Badge>
-              <Badge colorPalette="orange" loading={ isLoading }>{ getTokenTransferTypeText(type) }</Badge>
+              <Badge loading={ isLoading }>{ getBrc20TokenTypeName(token, chainData?.app_config) }</Badge>
+              <Badge colorPalette="orange" loading={ isLoading }>{ getBrc20TransferTypeText(type, token) ?? getTokenTransferTypeText(type) }</Badge>
             </Flex>
           </>
         ) : 'N/A' }

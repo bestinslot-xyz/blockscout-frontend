@@ -11,6 +11,7 @@ import getQueryParamString from 'lib/router/getQueryParamString';
 import { ADDRESS_TOKEN_BALANCE_ERC_20 } from 'stubs/address';
 import { generateListStub } from 'stubs/utils';
 import RoutedTabs from 'toolkit/components/RoutedTabs/RoutedTabs';
+import useBrc20TokenBalances from 'ui/brc20/useBrc20TokenBalances';
 import Pagination from 'ui/shared/pagination/Pagination';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
 
@@ -64,6 +65,12 @@ const AddressTokens = ({ shouldRender = true, isQueryEnabled = true }: Props) =>
       placeholderData: generateListStub<'general:address_tokens'>(ADDRESS_TOKEN_BALANCE_ERC_20, 10, { next_page_params: null }),
     },
   });
+  const erc20Items = useBrc20TokenBalances({
+    hash,
+    items: erc20Query.data?.items,
+    isLastPage: !erc20Query.isPlaceholderData && !erc20Query.data?.next_page_params,
+    isEnabled: isQueryEnabled && (tab === 'tokens' || tab === 'tokens_erc20'),
+  });
 
   const { nftsQuery, collectionsQuery, displayType: nftDisplayType, tokenTypes: nftTokenTypes, onDisplayTypeChange, onTokenTypesChange } = useAddressNftQuery({
     scrollRef,
@@ -82,11 +89,12 @@ const AddressTokens = ({ shouldRender = true, isQueryEnabled = true }: Props) =>
       id: 'tokens_erc20',
       title: [
         `${ config.chain.tokenStandard }-20`,
+        'BRC-20',
         ...config.chain.additionalTokenTypes.map((item) => item.name),
       ].join(' & '),
       component: (
         <ERC20Tokens
-          items={ erc20Query.data?.items }
+          items={ erc20Items }
           isLoading={ erc20Query.isPlaceholderData }
           pagination={ erc20Query.pagination }
           isError={ erc20Query.isError }

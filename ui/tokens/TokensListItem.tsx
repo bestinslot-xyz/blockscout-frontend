@@ -7,10 +7,11 @@ import type { AggregatedTokenInfo } from 'types/client/multichainAggregator';
 
 import config from 'configs/app';
 import multichainConfig from 'configs/multichain';
+import { isBrc20BaseToken } from 'lib/brc20/tokens';
 import getItemIndex from 'lib/getItemIndex';
-import { getTokenTypeName } from 'lib/token/tokenTypes';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Tag } from 'toolkit/chakra/tag';
+import Brc20TokenTypeTag from 'ui/brc20/Brc20TokenTypeTag';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import TokenEntity from 'ui/shared/entities/token/TokenEntity';
@@ -80,7 +81,7 @@ const TokensListItem = ({
             noLink={ type === 'NATIVE' }
           />
           <Flex ml={ 3 } flexShrink={ 0 } columnGap={ 1 }>
-            <Tag loading={ isLoading }>{ getTokenTypeName(type, chainInfo?.app_config) }</Tag>
+            <Brc20TokenTypeTag token={ token } loading={ isLoading }/>
             { bridgedChainTag && <Tag loading={ isLoading }>{ bridgedChainTag }</Tag> }
           </Flex>
           <Skeleton loading={ isLoading } textStyle="sm" ml="auto" color="text.secondary" minW="24px" textAlign="right">
@@ -88,7 +89,7 @@ const TokensListItem = ({
           </Skeleton>
         </GridItem>
       </Grid>
-      { type !== 'NATIVE' && (
+      { type !== 'NATIVE' && !isBrc20BaseToken(token) && (
         <Flex justifyContent="space-between" alignItems="center" width="150px" ml={ 7 } mt={ -2 }>
           <AddressEntity
             address={{ hash: addressHash, filecoin: { robust: filecoinRobustAddress } }}

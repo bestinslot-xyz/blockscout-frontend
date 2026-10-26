@@ -51,6 +51,7 @@ import useAddressCountersQuery from 'ui/address/utils/useAddressCountersQuery';
 import useAddressQuery from 'ui/address/utils/useAddressQuery';
 import useCheckAddressFormat from 'ui/address/utils/useCheckAddressFormat';
 import useCheckDomainNameParam from 'ui/address/utils/useCheckDomainNameParam';
+import { useBrc20AddressIdentity, useBrc20AddressTabsCounters } from 'ui/brc20/useBrc20Address';
 import AccountActionsMenu from 'ui/shared/AccountActionsMenu/AccountActionsMenu';
 import TextAd from 'ui/shared/ad/TextAd';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
@@ -94,6 +95,8 @@ const AddressPageContent = () => {
       placeholderData: ADDRESS_TABS_COUNTERS,
     },
   });
+  const brc20TabsCounters = useBrc20AddressTabsCounters({ hash, isEnabled: areQueriesEnabled }, addressTabsCountersQuery.data);
+  const brc20Identity = useBrc20AddressIdentity({ hash, isEnabled: areQueriesEnabled });
 
   const countersQuery = useAddressCountersQuery({
     hash,
@@ -147,6 +150,7 @@ const AddressPageContent = () => {
   const isTabsLoading =
     isLoading ||
     addressTabsCountersQuery.isPlaceholderData ||
+    brc20TabsCounters.isPlaceholderData ||
     (address3rdPartyWidgets.isEnabled && address3rdPartyWidgets.configQuery.isPlaceholderData) ||
     (config.features.userOps.isEnabled && userOpsAccountQuery.isPlaceholderData) ||
     (config.features.mudFramework.isEnabled && mudTablesCountQuery.isPlaceholderData);
@@ -254,14 +258,14 @@ const AddressPageContent = () => {
       {
         id: 'token_transfers',
         title: 'Token transfers',
-        count: addressTabsCountersQuery.data?.token_transfers_count,
+        count: brc20TabsCounters.data?.token_transfers_count,
         component: <AddressTokenTransfers shouldRender={ !isTabsLoading } isQueryEnabled={ areQueriesEnabled }/>,
         subTabs: ADDRESS_TOKEN_TRANSFERS_TAB_IDS,
       },
       {
         id: 'tokens',
         title: 'Tokens',
-        count: addressTabsCountersQuery.data?.token_balances_count,
+        count: brc20TabsCounters.data?.token_balances_count,
         component: <AddressTokens shouldRender={ !isTabsLoading } isQueryEnabled={ areQueriesEnabled }/>,
         subTabs: TOKEN_TABS,
       },
@@ -317,6 +321,7 @@ const AddressPageContent = () => {
     addressQuery,
     countersQuery,
     addressTabsCountersQuery.data,
+    brc20TabsCounters.data,
     userOpsAccountQuery.data,
     isTabsLoading,
     areQueriesEnabled,
@@ -447,7 +452,7 @@ const AddressPageContent = () => {
       <AddressEntity
         address={{
           ...addressQuery.data,
-          hash: checkSummedHash,
+          hash: brc20Identity.btcIdentity ?? checkSummedHash,
           name: '',
           ens_domain_name: '',
           implementations: null,

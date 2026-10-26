@@ -13,6 +13,13 @@ import type {
   GeneralApiBlockPaginationFilters,
   GeneralApiBlockResourceName, GeneralApiBlockResourcePayload } from './block';
 import { GENERAL_API_BLOCK_RESOURCES } from './block';
+import type {
+  GeneralApiBrc20PaginationFilters,
+  GeneralApiBrc20PaginationSorting,
+  GeneralApiBrc20ResourceName,
+  GeneralApiBrc20ResourcePayload,
+} from './brc20';
+import { GENERAL_API_BRC20_RESOURCES } from './brc20';
 import { GENERAL_API_CONTRACT_RESOURCES } from './contract';
 import type {
   GeneralApiContractPaginationFilters,
@@ -50,6 +57,7 @@ export const GENERAL_API_RESOURCES = {
   ...GENERAL_API_ACCOUNT_RESOURCES,
   ...GENERAL_API_ADDRESS_RESOURCES,
   ...GENERAL_API_BLOCK_RESOURCES,
+  ...GENERAL_API_BRC20_RESOURCES,
   ...GENERAL_API_CONTRACT_RESOURCES,
   ...GENERAL_API_MISC_RESOURCES,
   ...GENERAL_API_ROLLUP_RESOURCES,
@@ -65,6 +73,7 @@ export type GeneralApiResourcePayload<R extends GeneralApiResourceName> =
 R extends GeneralApiAccountResourceName ? GeneralApiAccountResourcePayload<R> :
 R extends GeneralApiAddressResourceName ? GeneralApiAddressResourcePayload<R> :
 R extends GeneralApiBlockResourceName ? GeneralApiBlockResourcePayload<R> :
+R extends GeneralApiBrc20ResourceName ? GeneralApiBrc20ResourcePayload<R> :
 R extends GeneralApiContractResourceName ? GeneralApiContractResourcePayload<R> :
 R extends GeneralApiMiscResourceName ? GeneralApiMiscResourcePayload<R> :
 R extends GeneralApiRollupResourceName ? GeneralApiRollupResourcePayload<R> :
@@ -78,6 +87,7 @@ never;
 export type GeneralApiPaginationFilters<R extends GeneralApiResourceName> =
 R extends GeneralApiAddressResourceName ? GeneralApiAddressPaginationFilters<R> :
 R extends GeneralApiBlockResourceName ? GeneralApiBlockPaginationFilters<R> :
+R extends GeneralApiBrc20ResourceName ? GeneralApiBrc20PaginationFilters<R> :
 R extends GeneralApiContractResourceName ? GeneralApiContractPaginationFilters<R> :
 R extends GeneralApiMiscResourceName ? GeneralApiMiscPaginationFilters<R> :
 R extends GeneralApiRollupResourceName ? GeneralApiRollupPaginationFilters<R> :
@@ -89,6 +99,7 @@ never;
 /* eslint-disable @stylistic/indent */
 export type GeneralApiPaginationSorting<R extends GeneralApiResourceName> =
 R extends GeneralApiAddressResourceName ? GeneralApiAddressPaginationSorting<R> :
+R extends GeneralApiBrc20ResourceName ? GeneralApiBrc20PaginationSorting<R> :
 R extends GeneralApiContractResourceName ? GeneralApiContractPaginationSorting<R> :
 R extends GeneralApiMiscResourceName ? GeneralApiMiscPaginationSorting<R> :
 R extends GeneralApiRollupResourceName ? GeneralApiRollupPaginationSorting<R> :

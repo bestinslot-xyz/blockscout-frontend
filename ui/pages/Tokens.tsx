@@ -7,6 +7,7 @@ import type { TokenType } from 'types/api/token';
 import type { TokensSortingValue, TokensSortingField, TokensSorting } from 'types/api/tokens';
 
 import config from 'configs/app';
+import { normalizeBrc20TokensResponse } from 'lib/brc20/tokens';
 import useDebounce from 'lib/hooks/useDebounce';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import getQueryParamString from 'lib/router/getQueryParamString';
@@ -55,11 +56,13 @@ const Tokens = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
+  const tokensResourceName = tab === 'brc20' ? 'general:brc20_tokens' : 'general:tokens';
   const tokensQuery = useQueryWithPages({
-    resourceName: tab === 'bridged' ? 'general:tokens_bridged' : 'general:tokens',
+    resourceName: tab === 'bridged' ? 'general:tokens_bridged' : tokensResourceName,
     filters: tab === 'bridged' ? { q: debouncedSearchTerm, chain_ids: bridgeChains } : { q: debouncedSearchTerm, type: tokenTypes },
     sorting: getSortParamsFromValue<TokensSortingValue, TokensSortingField, TokensSorting['order']>(sort),
     options: {
+      select: tab === 'brc20' ? normalizeBrc20TokensResponse : undefined,
       placeholderData: generateListStub<'general:tokens'>(
         TOKEN_INFO_ERC_20,
         50,
@@ -104,7 +107,7 @@ const Tokens = () => {
     setBridgeChains(undefined);
   }, []);
 
-  const hasMultipleTabs = bridgedTokensFeature.isEnabled;
+  const hasMultipleTabs = true;
 
   const filter = tab === 'bridged' ? (
     <PopoverFilter contentProps={{ maxW: '350px' }} appliedFiltersNum={ bridgeChains?.length }>
@@ -120,7 +123,7 @@ const Tokens = () => {
     <TokensActionBar
       key={ tab }
       pagination={ tokensQuery.pagination }
-      filter={ filter }
+      filter={ tab === 'brc20' ? null : filter }
       searchTerm={ searchTerm }
       onSearchChange={ handleSearchTermChange }
       sort={ sort }
@@ -148,7 +151,7 @@ const Tokens = () => {
   const tabs: Array<TabItemRegular> = [
     {
       id: 'all',
-      title: 'All',
+      title: 'BRC2.0',
       component: (
         <TokensList
           query={ tokensQuery }
@@ -156,6 +159,20 @@ const Tokens = () => {
           onSortChange={ handleSortChange }
           actionBar={ isMobile ? actionBar : null }
           hasActiveFilters={ Boolean(searchTerm || tokenTypes) }
+          tableTop={ hasMultipleTabs ? TABS_HEIGHT : undefined }
+        />
+      ),
+    },
+    {
+      id: 'brc20',
+      title: 'BRC-20',
+      component: (
+        <TokensList
+          query={ tokensQuery }
+          sort={ sort }
+          onSortChange={ handleSortChange }
+          actionBar={ isMobile ? actionBar : null }
+          hasActiveFilters={ Boolean(searchTerm) }
           tableTop={ hasMultipleTabs ? TABS_HEIGHT : undefined }
         />
       ),

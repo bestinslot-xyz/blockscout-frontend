@@ -7,6 +7,7 @@ import type { TokenInfo } from 'types/api/token';
 import { route } from 'nextjs/routes';
 
 import config from 'configs/app';
+import { isBrc20BaseToken } from 'lib/brc20/tokens';
 import { useMultichainContext } from 'lib/contexts/multichain';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Tooltip } from 'toolkit/chakra/tooltip';
@@ -170,7 +171,7 @@ const TokenEntity = (props: EntityProps) => {
   return (
     <Container w="100%" { ...partsProps.container }>
       <Icon { ...partsProps.icon }/>
-      { props.noLink ? content : <Link { ...partsProps.link }>{ content }</Link> }
+      { props.noLink || isBrc20BaseToken(props.token) ? content : <Link { ...partsProps.link }>{ content }</Link> }
       <Symbol { ...partsProps.symbol }/>
       <Copy { ...partsProps.copy }/>
       <Reputation value={ props.token.reputation }/>
