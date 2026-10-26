@@ -1,16 +1,11 @@
-// BRC2.0 companion API, served next to the core API under /btc_api (blockscout-btc-api).
-// cspell:ignore inscr
+// Base BRC-20 data from the OPI brc20 API's explorer routes, served next to the core API
+// under /brc20_api. Inscription lookups go to the BRC2.0 RPC instead (lib/brc20/rpc.ts).
 import type { ApiResource } from '../../types';
 import type { AddressTabsCounters } from 'types/api/address';
-import type { SearchResultItem } from 'types/api/search';
 import type { TokensResponse, TokensSorting } from 'types/api/tokens';
 
 export interface Brc20BtcAddress {
   btc_address: string | null;
-}
-
-export interface Brc20InscriptionId {
-  inscription_id: string | null;
 }
 
 export interface Brc20Balance {
@@ -25,30 +20,19 @@ export interface Brc20BalancesResponse {
 
 export const GENERAL_API_BRC20_RESOURCES = {
   brc20_btc_address: {
-    path: '/btc_api/v2/btc_address/:hash',
+    path: '/brc20_api/v1/brc20/explorer/btc_address/:hash',
     pathParams: [ 'hash' as const ],
-  },
-  brc20_tx_inscription_id: {
-    path: '/btc_api/v2/btc_txhash_inscr_id/:hash',
-    pathParams: [ 'hash' as const ],
-  },
-  brc20_contract_inscription_id: {
-    path: '/btc_api/v2/btc_contract_hash_inscr_id/:hash',
-    pathParams: [ 'hash' as const ],
-  },
-  brc20_inscription_search: {
-    path: '/btc_api/v2/inscription_id_search',
   },
   brc20_address_balances: {
-    path: '/btc_api/v2/brc20_balance/:hash',
+    path: '/brc20_api/v1/brc20/explorer/balances/:hash',
     pathParams: [ 'hash' as const ],
   },
   brc20_address_tabs_counters: {
-    path: '/btc_api/v2/address_tabs_counters/:hash',
+    path: '/brc20_api/v1/brc20/explorer/address_tabs_counters/:hash',
     pathParams: [ 'hash' as const ],
   },
   brc20_tokens: {
-    path: '/btc_api/v2/brc20_tokens',
+    path: '/brc20_api/v1/brc20/explorer/tokens',
     filterFields: [ 'q' as const ],
     paginated: true,
   },
@@ -59,9 +43,6 @@ export type GeneralApiBrc20ResourceName = `general:${ keyof typeof GENERAL_API_B
 /* eslint-disable @stylistic/indent */
 export type GeneralApiBrc20ResourcePayload<R extends GeneralApiBrc20ResourceName> =
 R extends 'general:brc20_btc_address' ? Brc20BtcAddress :
-R extends 'general:brc20_tx_inscription_id' ? Brc20InscriptionId :
-R extends 'general:brc20_contract_inscription_id' ? Brc20InscriptionId :
-R extends 'general:brc20_inscription_search' ? Array<SearchResultItem> :
 R extends 'general:brc20_address_balances' ? Brc20BalancesResponse :
 R extends 'general:brc20_address_tabs_counters' ? AddressTabsCounters :
 R extends 'general:brc20_tokens' ? TokensResponse :
