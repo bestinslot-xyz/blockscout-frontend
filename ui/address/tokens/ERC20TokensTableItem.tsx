@@ -6,9 +6,10 @@ import type { AddressTokensErc20Item } from './types';
 
 import config from 'configs/app';
 import multichainConfig from 'configs/multichain';
-import { getTokenTypeName, isConfidentialTokenType } from 'lib/token/tokenTypes';
+import { isBrc20BaseToken } from 'lib/brc20/tokens';
+import { isConfidentialTokenType } from 'lib/token/tokenTypes';
 import { TableCell, TableRow } from 'toolkit/chakra/table';
-import { Tag } from 'toolkit/chakra/tag';
+import Brc20TokenTypeTag from 'ui/brc20/Brc20TokenTypeTag';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
 import NativeTokenTag from 'ui/shared/celo/NativeTokenTag';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
@@ -63,10 +64,10 @@ const ERC20TokensTableItem = ({
           />
           { isNativeToken && <NativeTokenTag/> }
         </HStack>
-        { hasAdditionalTokenTypes && <Tag loading={ isLoading } mt={ 2 }>{ getTokenTypeName(token.type) }</Tag> }
+        { hasAdditionalTokenTypes && <Brc20TokenTypeTag token={ token } loading={ isLoading } mt={ 2 }/> }
       </TableCell>
       <TableCell verticalAlign={ cellVerticalAlign }>
-        <Flex alignItems="center" width="150px" justifyContent="space-between">
+        <Flex alignItems="center" width="150px" justifyContent="space-between" hidden={ isBrc20BaseToken(token) }>
           <AddressEntity
             address={{ hash: token.address_hash }}
             isLoading={ isLoading }

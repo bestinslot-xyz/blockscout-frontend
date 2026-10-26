@@ -4,7 +4,8 @@ import React from 'react';
 import type { TokenTransfer } from 'types/api/tokenTransfer';
 import type { ClusterChainConfig } from 'types/multichain';
 
-import { getTokenTypeName, isConfidentialTokenType } from 'lib/token/tokenTypes';
+import { getBrc20TokenTypeName, getBrc20TransferTypeText } from 'lib/brc20/tokens';
+import { isConfidentialTokenType } from 'lib/token/tokenTypes';
 import { Badge } from 'toolkit/chakra/badge';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import AddressFromTo from 'ui/shared/address/AddressFromTo';
@@ -53,10 +54,10 @@ const TokenTransferListItem = ({
                 noCopy
                 w="auto"
               />
-              <Badge flexShrink={ 0 } loading={ isLoading }>{ getTokenTypeName(token.type, chainData?.app_config) }</Badge>
+              <Badge flexShrink={ 0 } loading={ isLoading }>{ getBrc20TokenTypeName(token, chainData?.app_config) }</Badge>
             </>
           ) }
-          <Badge colorPalette="orange" loading={ isLoading }>{ getTokenTransferTypeText(type) }</Badge>
+          <Badge colorPalette="orange" loading={ isLoading }>{ getBrc20TransferTypeText(type, token) ?? getTokenTransferTypeText(type) }</Badge>
         </Flex>
         { showTxInfo && txHash && (
           <TxAdditionalInfo hash={ txHash } isMobile isLoading={ isLoading }/>

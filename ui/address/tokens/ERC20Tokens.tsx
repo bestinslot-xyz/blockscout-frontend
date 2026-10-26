@@ -4,7 +4,6 @@ import React from 'react';
 import type { AddressTokenBalance } from 'types/api/address';
 import type { PaginationParams } from 'ui/shared/pagination/types';
 
-import config from 'configs/app';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import ActionBar from 'ui/shared/ActionBar';
 import DataListDisplay from 'ui/shared/DataListDisplay';
@@ -24,7 +23,8 @@ type Props = {
 const ERC20Tokens = ({ items, isLoading, pagination, isError, top }: Props) => {
   const isMobile = useIsMobile();
 
-  const hasAdditionalTokenTypes = config.chain.additionalTokenTypes.length > 0;
+  // BRC2.0 always shows the token kind: BRC-20, wrapped BRC-20 or pBRC-20
+  const hasAdditionalTokenTypes = true;
 
   const actionBar = isMobile && pagination.isVisible && (
     <ActionBar mt={ -6 }>

@@ -31,6 +31,7 @@ import { CollapsibleDetails } from 'toolkit/chakra/collapsible';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Tooltip } from 'toolkit/chakra/tooltip';
+import Brc20TxInscriptionItem from 'ui/brc20/Brc20TxInscriptionItem';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import * as DetailedInfo from 'ui/shared/DetailedInfo/DetailedInfo';
 import DetailedInfoNativeCoinValue from 'ui/shared/DetailedInfo/DetailedInfoNativeCoinValue';
@@ -195,6 +196,8 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus, noTxActions }: P
           </Skeleton>
         ) }
       </DetailedInfo.ItemValue>
+
+      <Brc20TxInscriptionItem hash={ data.hash } isLoading={ isLoading }/>
 
       <DetailedInfo.ItemLabel
         hint="Current transaction state: Success, Failed (Error), or Pending (In Process)"

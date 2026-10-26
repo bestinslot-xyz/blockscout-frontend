@@ -9,8 +9,8 @@ import type { EntityTag } from 'ui/shared/EntityTags/types';
 import config from 'configs/app';
 import useAddressMetadataInfoQuery from 'lib/address/useAddressMetadataInfoQuery';
 import type { ResourceError } from 'lib/api/resources';
+import { getBrc20TokenTypeName } from 'lib/brc20/tokens';
 import { useMultichainContext } from 'lib/contexts/multichain';
-import { getTokenTypeName } from 'lib/token/tokenTypes';
 import { Tooltip } from 'toolkit/chakra/tooltip';
 import AddressAlerts from 'ui/address/details/AddressAlerts';
 import AddressQrCode from 'ui/address/details/AddressQrCode';
@@ -56,7 +56,7 @@ const TokenPageTitle = ({ tokenQuery, addressQuery, verifiedInfoQuery, hash }: P
     return [
       tokenQuery.data ? {
         slug: tokenQuery.data?.type,
-        name: getTokenTypeName(tokenQuery.data.type, multichainContext?.chain?.app_config),
+        name: getBrc20TokenTypeName(tokenQuery.data, multichainContext?.chain?.app_config),
         tagType: 'custom' as const,
         ordinal: PREDEFINED_TAG_PRIORITY,
       } : undefined,

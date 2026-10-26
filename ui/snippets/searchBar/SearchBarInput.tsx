@@ -81,7 +81,7 @@ const SearchBarInput = (
 
   const getPlaceholder = () => {
     const clusterText = nameServicesFeature.isEnabled && nameServicesFeature.clusters.isEnabled ? ' / cluster ' : '';
-    return `Search by address / txn hash / block / token${ clusterText }/... `;
+    return `Search by BTC or EVM address / inscription ID / txn hash / block / token${ clusterText }/... `;
   };
 
   const startElement = (

@@ -8,6 +8,7 @@ import getNetworkValidationActionText from 'lib/networks/getNetworkValidationAct
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import AddressCounterItem from 'ui/address/details/AddressCounterItem';
+import Brc20AddressEvmItem from 'ui/brc20/Brc20AddressEvmItem';
 import ServiceDegradationWarning from 'ui/shared/alerts/ServiceDegradationWarning';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
@@ -141,6 +142,8 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
             </DetailedInfo.ItemValue>
           </>
         ) }
+
+        <Brc20AddressEvmItem addressHash={ data.hash }/>
 
         <AddressNameInfo data={ data } isLoading={ isLoading }/>
 

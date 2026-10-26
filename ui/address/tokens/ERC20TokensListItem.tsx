@@ -6,9 +6,10 @@ import type { AddressTokensErc20Item } from './types';
 
 import config from 'configs/app';
 import multichainConfig from 'configs/multichain';
-import { getTokenTypeName, isConfidentialTokenType } from 'lib/token/tokenTypes';
+import { isBrc20BaseToken } from 'lib/brc20/tokens';
+import { isConfidentialTokenType } from 'lib/token/tokenTypes';
 import { Skeleton } from 'toolkit/chakra/skeleton';
-import { Tag } from 'toolkit/chakra/tag';
+import Brc20TokenTypeTag from 'ui/brc20/Brc20TokenTypeTag';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
 import NativeTokenTag from 'ui/shared/celo/NativeTokenTag';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
@@ -59,9 +60,9 @@ const ERC20TokensListItem = ({
           width="auto"
         />
         { isNativeToken && <NativeTokenTag/> }
-        { hasAdditionalTokenTypes && <Tag loading={ isLoading }>{ getTokenTypeName(token.type) }</Tag> }
+        { hasAdditionalTokenTypes && <Brc20TokenTypeTag token={ token } loading={ isLoading }/> }
       </Flex>
-      <Flex alignItems="center" pl={ 8 }>
+      <Flex alignItems="center" pl={ 8 } hidden={ isBrc20BaseToken(token) }>
         <AddressEntity
           address={{ hash: token.address_hash }}
           isLoading={ isLoading }
