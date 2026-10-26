@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import React from 'react';
 
-import useApiQuery from 'lib/api/useApiQuery';
+import { useBrc20TxInscriptionId } from 'lib/brc20/rpc';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import * as DetailedInfo from 'ui/shared/DetailedInfo/DetailedInfo';
@@ -14,15 +14,9 @@ interface Props {
 
 // Every BRC2.0 transaction is triggered by a Bitcoin inscription.
 const Brc20TxInscriptionItem = ({ hash, isLoading }: Props) => {
-  const query = useApiQuery('general:brc20_tx_inscription_id', {
-    pathParams: { hash },
-    queryOptions: {
-      enabled: Boolean(hash) && !isLoading,
-      refetchOnMount: false,
-    },
-  });
+  const query = useBrc20TxInscriptionId({ hash, isEnabled: !isLoading });
 
-  const inscriptionId = query.data?.inscription_id;
+  const inscriptionId = query.data;
 
   if (!inscriptionId) {
     return null;

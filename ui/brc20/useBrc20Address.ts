@@ -3,6 +3,7 @@ import React from 'react';
 import type { AddressTabsCounters } from 'types/api/address';
 
 import useApiQuery from 'lib/api/useApiQuery';
+import { useBrc20ContractInscriptionId } from 'lib/brc20/rpc';
 import { ADDRESS_TABS_COUNTERS } from 'stubs/address';
 
 interface Params {
@@ -21,17 +22,10 @@ export function useBrc20AddressIdentity({ hash, isEnabled = true }: Params) {
     },
   });
 
-  const inscriptionIdQuery = useApiQuery('general:brc20_contract_inscription_id', {
-    pathParams: { hash },
-    queryOptions: {
-      enabled: isEnabled && Boolean(hash),
-      placeholderData: { inscription_id: null },
-      refetchOnMount: false,
-    },
-  });
+  const inscriptionIdQuery = useBrc20ContractInscriptionId({ hash, isEnabled });
 
   return {
-    btcIdentity: btcAddressQuery.data?.btc_address ?? inscriptionIdQuery.data?.inscription_id ?? undefined,
+    btcIdentity: btcAddressQuery.data?.btc_address ?? inscriptionIdQuery.data ?? undefined,
     isPlaceholderData: btcAddressQuery.isPlaceholderData || inscriptionIdQuery.isPlaceholderData,
   };
 }

@@ -5,6 +5,7 @@ import multichainConfig from 'configs/multichain';
 import { isBech32Address, fromBech32Address } from 'lib/address/bech32';
 import useApiQuery from 'lib/api/useApiQuery';
 import { isInscriptionId, toBrc20SearchTerm } from 'lib/brc20/btcAddress';
+import { useBrc20InscriptionSearch } from 'lib/brc20/rpc';
 import useDebounce from 'lib/hooks/useDebounce';
 import { getExternalSearchItem } from 'lib/search/externalSearch';
 
@@ -19,12 +20,18 @@ export default function useQuickSearchQuery() {
     return Boolean(multichainConfig());
   }, []);
 
-  const mainQuery = useApiQuery(isInscriptionId(debouncedSearchTerm) ? 'general:brc20_inscription_search' : 'general:quick_search', {
+  const isInscriptionSearch = isInscriptionId(debouncedSearchTerm);
+
+  const quickSearchQuery = useApiQuery('general:quick_search', {
     queryParams: { q: isBech32Address(debouncedSearchTerm) ? fromBech32Address(debouncedSearchTerm) : toBrc20SearchTerm(debouncedSearchTerm) },
     queryOptions: {
-      enabled: debouncedSearchTerm.trim().length > 0 && !isMultichain,
+      enabled: debouncedSearchTerm.trim().length > 0 && !isMultichain && !isInscriptionSearch,
     },
   });
+
+  const inscriptionSearchQuery = useBrc20InscriptionSearch({ inscriptionId: debouncedSearchTerm, isEnabled: !isMultichain && isInscriptionSearch });
+
+  const mainQuery = isInscriptionSearch ? inscriptionSearchQuery : quickSearchQuery;
 
   const multichainQuery = useSearchMultichain({ searchTerm: debouncedSearchTerm, enabled: isMultichain });
 
